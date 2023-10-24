@@ -54,7 +54,7 @@ class FormioForms extends BaseController
         ],201);
     }
 
-    public function delete($id){
+    public function hapus($id){
         $forms = Formio_forms::find($id);
         if (!$forms){
             return response()->json([

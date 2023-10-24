@@ -61,7 +61,7 @@ class RbacAuthItem extends BaseController
         ],201);
     }
 
-    public function delete($id){
+    public function hapus($id){
         $item = Rbac_auth_item::find($id);
         if (!$item) {
             return response()->json([

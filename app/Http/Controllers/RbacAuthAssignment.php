@@ -53,7 +53,7 @@ class RbacAuthAssignment extends BaseController
         ],201);
     }
 
-    public function delete($fkName){
+    public function hapus($fkName){
         $assignment = Rbac_auth_assignment::find($fkName);
         if (!$assignment) {
             return response()->json([

@@ -21,7 +21,6 @@ class FormioSubmission extends BaseController
         if (!$forms) {
             return response()->json([
                 'message' => 'data tidak ditemukan',
-                'data' => $forms
             ]);
         }
         return response()->json([
@@ -46,7 +45,6 @@ class FormioSubmission extends BaseController
         if (!$forms) {
             return response()->json([
                 'message' => 'data tidak ditemukan',
-                'data' => $forms
             ]);
         }
         $forms->update($request->all());
@@ -56,12 +54,11 @@ class FormioSubmission extends BaseController
         ],201);
     }
 
-    public function delete($id){
+    public function hapus($id){
         $forms = Formio_submission::find($id);
         if (!$forms) {
             return response()->json([
                 'message' => 'data tidak ditemukan',
-                'data' => $forms
             ]);
         }
         $forms->delete();

@@ -55,7 +55,7 @@ class ArticleCategory extends BaseController
         ],200);
     }   
 
-    public function delete($id){
+    public function hapus($id){
         $category = Article_category::find($id);
         if (!$category){
             return response()->json([

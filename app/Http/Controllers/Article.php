@@ -18,7 +18,7 @@ class Article extends BaseController
     }
     public function show($id)
     {
-        $article = ModelArticle::with('article_attachment', 'article_attachment')->find($id);
+        $article = ModelArticle::with('article_category', 'article_attachment')->find($id);
         if (!$article) {
             return response()->json([
                 'message' => 'data tidak ditemukan'
@@ -61,7 +61,7 @@ class Article extends BaseController
         ]);
     }
 
-    public function delete($id)
+    public function hapus($id)
     {
         $article = ModelArticle::find($id);
         if (!$article) {

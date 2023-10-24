@@ -52,7 +52,7 @@ class RbacAuthItemChild extends BaseController
             'data' => $itemChild
         ],201);
     }
-    public function delete($parentOrChild){
+    public function hapus($parentOrChild){
         $itemChild = Rbac_auth_item_child::find($parentOrChild);
         if (!$itemChild){
             return response()->json([

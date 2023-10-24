@@ -64,7 +64,7 @@ class ArticleAttachment extends BaseController
         ],200);
     }
 
-    public function destroy($id){
+    public function hapus($id){
         $attachment = Article_attachment::find($id);
         if (!$attachment){
             return response()->json([
