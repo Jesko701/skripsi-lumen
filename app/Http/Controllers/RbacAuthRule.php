@@ -26,7 +26,7 @@ class RbacAuthRule extends BaseController
         return response()->json([
             'message' => 'data berhasil ditemukan',
             'data' => $authRule
-        ],201);
+        ],200);
     }
 
     public function create(Request $request){
@@ -51,7 +51,7 @@ class RbacAuthRule extends BaseController
         return response()->json([
             'message' => 'data berhasil diupdate',
             'data' => $authRule
-        ],201);
+        ],200);
     }
 
     public function hapus($id){
@@ -61,6 +61,7 @@ class RbacAuthRule extends BaseController
                 'message' => 'data tidak ditemukan'
             ],201);
         }
+        $authRule->rbac_auth_item()->delete();
         $authRule->delete();
         return response()->json([
             'message' => 'data berhasil dihapus'

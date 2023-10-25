@@ -27,7 +27,7 @@ class RbacAuthItemChild extends BaseController
         return response()->json([
             'message' => 'data berhasil ditemukan',
             'data' => $itemChild
-        ], 201);
+        ], 200);
     }
     public function create(Request $request)
     {
@@ -38,30 +38,31 @@ class RbacAuthItemChild extends BaseController
         ], 201);
     }
 
-    public function update(Request $request, $parentOrChild){
+    public function update(Request $request, $parentOrChild)
+    {
         $item = Rbac_auth_item::find($parentOrChild);
-        if (!$item){
+        if (!$item) {
             return response()->json([
                 'message' => 'data tidak ditemukan'
-            ],404);
+            ], 404);
         }
         $itemChild = Rbac_auth_item_child::find($parentOrChild);
         $itemChild->update($request->all());
         return response()->json([
             'message' => 'data berhasil diupdate',
             'data' => $itemChild
-        ],201);
+        ], 200);
     }
-    public function hapus($parentOrChild){
-        $itemChild = Rbac_auth_item_child::find($parentOrChild);
-        if (!$itemChild){
+    public function hapus($parentOrChild)
+    {
+        $column_parent = 'parent';
+        $column_child = 'child';
+        $itemChild = Rbac_auth_item_child::where(function ($query) use ($parentOrChild, $column_parent, $column_child) {
+            $query->where($column_parent, $parentOrChild)->orWhere($column_child, $parentOrChild);
+        })->delete();
+        if ($itemChild === 0)
             return response()->json([
-                'message' => 'data tidak ditemukan'
-            ],404);
-        }
-        $itemChild->delete();
-        return response()->json([
-            'message' => 'data berhasil dihapus'
-        ],200);
+                'message' => 'data berhasil dihapus'
+            ], 200);
     }
 }

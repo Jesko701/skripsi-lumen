@@ -25,7 +25,7 @@ class RbacAuthAssignment extends BaseController
             ],404);
         }
         return response()->json([
-            'message' => 'berhasil mengambil seluruh data',
+            'message' => 'data berhasil ditemukan',
             'data' => $assignment
         ],201);
     }
