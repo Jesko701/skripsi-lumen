@@ -30,13 +30,7 @@ class RbacAuthItem extends BaseController
         ],200);
     }
 
-    public function create(Request $request, $fkName){
-        $rule = Rbac_auth_rule::find($fkName);
-        if (!$rule) {
-            return response()->json([
-                'message' => 'data tidak ditemukan'
-            ],404);
-        }
+    public function create(Request $request){
         $request['created_at'] = time();
         $request['updated_at'] = time();
         $item = Rbac_auth_item::create($request->all());

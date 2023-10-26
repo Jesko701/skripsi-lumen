@@ -40,17 +40,22 @@ class RbacAuthItemChild extends BaseController
 
     public function update(Request $request, $parentOrChild)
     {
-        $item = Rbac_auth_item::find($parentOrChild);
-        if (!$item) {
+        $column_parent = "parent";
+        $column_child = "child";
+        $item = Rbac_auth_item_child::where(function ($query) use ($parentOrChild, $column_parent, $column_child) {
+            $query->where($column_parent, $parentOrChild)->orWhere($column_child, $parentOrChild);
+        })->update(['child' => $request->json('child')]);
+        if ($item === 0) {
             return response()->json([
                 'message' => 'data tidak ditemukan'
             ], 404);
         }
-        $itemChild = Rbac_auth_item_child::find($parentOrChild);
-        $itemChild->update($request->all());
+        $updateRecord = Rbac_auth_item_child::where(function ($query) use ($parentOrChild, $column_parent, $column_child) {
+            $query->where($column_parent, $parentOrChild)->orWhere($column_child, $parentOrChild);
+        })->get();
         return response()->json([
             'message' => 'data berhasil diupdate',
-            'data' => $itemChild
+            'data' => $updateRecord
         ], 200);
     }
     public function hapus($parentOrChild)
@@ -60,9 +65,13 @@ class RbacAuthItemChild extends BaseController
         $itemChild = Rbac_auth_item_child::where(function ($query) use ($parentOrChild, $column_parent, $column_child) {
             $query->where($column_parent, $parentOrChild)->orWhere($column_child, $parentOrChild);
         })->delete();
-        if ($itemChild === 0)
+        if ($itemChild > 0){
             return response()->json([
                 'message' => 'data berhasil dihapus'
             ], 200);
+        };
+        return response()->json([
+            'message' => 'data gagal dihapus'
+        ],404);
     }
 }
