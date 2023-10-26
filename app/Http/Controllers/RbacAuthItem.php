@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Rbac_auth_item;
-use App\Models\Rbac_auth_rule;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
