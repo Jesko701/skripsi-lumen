@@ -34,7 +34,7 @@ $router->group(['prefix' => 'articleAtt'], function ($router) {
 $router->group(['prefix' => 'articleCat'], function ($router) {
     $router->get('/', 'ArticleCategory@all');
     $router->get('/{id}', 'ArticleCategory@show');
-    $router->post('/{articleId}', 'ArticleCategory@create');
+    $router->post('/', 'ArticleCategory@create');
     $router->put('/{id}', 'ArticleCategory@update');
     $router->delete('/{id}', 'ArticleCategory@hapus');
 });
@@ -54,29 +54,29 @@ $router->group(['prefix' => 'formsSubmission'], function ($router) {
 });
 $router->group(['prefix' => 'rbacAssign'], function ($router) {
     $router->get('/', 'RbacAuthAssignment@all');
-    $router->get('/{fkName}', 'RbacAuthAssignment@show');
+    $router->get('/{item_name}', 'RbacAuthAssignment@show');
     $router->post('/', 'RbacAuthAssignment@create');
-    $router->put('/{fkName}', 'RbacAuthAssignment@update');
-    $router->delete('/{fkName}', 'RbacAuthAssignment@hapus');
+    $router->put('/{item_name}', 'RbacAuthAssignment@update');
+    $router->delete('/{item_name}', 'RbacAuthAssignment@hapus');
 });
 $router->group(['prefix' => 'rbacItem'], function ($router) {
     $router->get('/', 'RbacAuthItem@all');
-    $router->get('/{itemName}', 'RbacAuthItem@show');
+    $router->get('/{name}', 'RbacAuthItem@show');
     $router->post('/', 'RbacAuthItem@create');
     $router->put('/{name}', 'RbacAuthItem@update');
-    $router->delete('/{id}', 'RbacAuthItem@hapus');
+    $router->delete('/{name}', 'RbacAuthItem@hapus');
 });
 $router->group(['prefix' => 'rbacChild'], function ($router) {
     $router->get('/', 'RbacAuthItemChild@all');
-    $router->get('/{parentOrChild}', 'RbacAuthItemChild@show');
+    $router->get('/{parent}', 'RbacAuthItemChild@show');
     $router->post('/', 'RbacAuthItemChild@create');
-    $router->put('/{parentOrChild}', 'RbacAuthItemChild@update');
-    $router->delete('/{parentOrChild}', 'RbacAuthItemChild@hapus');
+    $router->put('/{parent}', 'RbacAuthItemChild@update');
+    $router->delete('/{parent}', 'RbacAuthItemChild@hapus');
 });
 $router->group(['prefix' => 'rbacRule'], function ($router) {
     $router->get('/', 'RbacAuthRule@all');
-    $router->get('/{id}', 'RbacAuthRule@show');
+    $router->get('/{name}', 'RbacAuthRule@show');
     $router->post('/', 'RbacAuthRule@create');
-    $router->put('/{id}', 'RbacAuthRule@update');
-    $router->delete('/{id}', 'RbacAuthRule@hapus');
+    $router->put('/{name}', 'RbacAuthRule@update');
+    $router->delete('/{name}', 'RbacAuthRule@hapus');
 });

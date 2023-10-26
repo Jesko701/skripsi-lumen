@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Rbac_auth_assignment;
-use App\Models\Rbac_auth_item;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
@@ -17,8 +16,8 @@ class RbacAuthAssignment extends BaseController
         ],200);
     }
 
-    public function show($fkName){
-        $assignment = Rbac_auth_assignment::with('rbac_auth_item')->find($fkName);
+    public function show($item_name){
+        $assignment = Rbac_auth_assignment::with('rbac_auth_item')->find($item_name);
         if (!$assignment){
             return response()->json([
                 'message' => 'data tidak ditemukan'
@@ -39,22 +38,21 @@ class RbacAuthAssignment extends BaseController
         ],201);
     }
 
-    public function update(Request $request, $fkName){
-        $item = Rbac_auth_item::find($fkName);
-        if (!$item) {
+    public function update(Request $request, $item_name){
+        $assignment = Rbac_auth_assignment::find($item_name);
+        if (!$assignment){
             return response()->json([
                 'message' => 'data tidak ditemukan'
             ],404);
         }
-        $assignment = Rbac_auth_assignment::find($fkName);
         $assignment->update($request->all());
         return response()->json([
             'message' => 'data berhasil diupdate'
         ],201);
     }
 
-    public function hapus($fkName){
-        $assignment = Rbac_auth_assignment::find($fkName);
+    public function hapus($item_name){
+        $assignment = Rbac_auth_assignment::find($item_name);
         if (!$assignment) {
             return response()->json([
                 'message' => 'data tidak ditemukan'

@@ -32,16 +32,10 @@ class ArticleAttachment extends BaseController
         ],201);
     }
 
-    public function create(Request $request, $articleId){
+    public function create(Request $request){
         $request['created_at'] = time();
-        $article = Article::find($articleId);
-        if (!$article){
-            return response()->json([
-                'message' => 'data tidak ditemukan'
-            ]);
-        }
+        
         $attachmentData = $request->all();
-        $attachmentData['article_id'] = $articleId;
 
         $attachment = Article_attachment::create($attachmentData);
         return response()->json([

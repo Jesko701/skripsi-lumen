@@ -16,8 +16,8 @@ class RbacAuthItem extends BaseController
         ],200);
     }
 
-    public function show($itemName){
-        $item=Rbac_auth_item::with('rbac_auth_item_child','rbac_auth_assignment')->find($itemName);
+    public function show($name){
+        $item=Rbac_auth_item::with('rbac_auth_item_child','rbac_auth_assignment')->find($name);
         if (!$item) {
             return response()->json([
                 'message' => 'data tidak ditemukan'
@@ -54,8 +54,8 @@ class RbacAuthItem extends BaseController
         ],200);
     }
 
-    public function hapus($id){
-        $item = Rbac_auth_item::find($id);
+    public function hapus($name){
+        $item = Rbac_auth_item::find($name);
         if (!$item) {
             return response()->json([
                 'message' => 'data tidak ditemukan'

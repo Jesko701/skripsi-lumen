@@ -18,9 +18,9 @@ class RbacAuthItemChild extends BaseController
         ], 200);
     }
 
-    public function show($parentOrChild)
+    public function show($parent)
     {
-        $itemChild = Rbac_auth_item_child::with('rbac_auth_item')->find($parentOrChild);
+        $itemChild = Rbac_auth_item_child::with('rbac_auth_item')->find($parent);
         if (!$itemChild) {
             return response()->json(['message' => "Data tidak ditemukan"], 404);
         }
@@ -38,32 +38,32 @@ class RbacAuthItemChild extends BaseController
         ], 201);
     }
 
-    public function update(Request $request, $parentOrChild)
+    public function update(Request $request, $parent)
     {
         $column_parent = "parent";
         $column_child = "child";
-        $item = Rbac_auth_item_child::where(function ($query) use ($parentOrChild, $column_parent, $column_child) {
-            $query->where($column_parent, $parentOrChild)->orWhere($column_child, $parentOrChild);
+        $item = Rbac_auth_item_child::where(function ($query) use ($parent, $column_parent, $column_child) {
+            $query->where($column_parent, $parent)->orWhere($column_child, $parent);
         })->update(['child' => $request->json('child')]);
         if ($item === 0) {
             return response()->json([
                 'message' => 'data tidak ditemukan'
             ], 404);
         }
-        $updateRecord = Rbac_auth_item_child::where(function ($query) use ($parentOrChild, $column_parent, $column_child) {
-            $query->where($column_parent, $parentOrChild)->orWhere($column_child, $parentOrChild);
+        $updateRecord = Rbac_auth_item_child::where(function ($query) use ($parent, $column_parent, $column_child) {
+            $query->where($column_parent, $parent)->orWhere($column_child, $parent);
         })->get();
         return response()->json([
             'message' => 'data berhasil diupdate',
             'data' => $updateRecord
         ], 200);
     }
-    public function hapus($parentOrChild)
+    public function hapus($parent)
     {
         $column_parent = 'parent';
         $column_child = 'child';
-        $itemChild = Rbac_auth_item_child::where(function ($query) use ($parentOrChild, $column_parent, $column_child) {
-            $query->where($column_parent, $parentOrChild)->orWhere($column_child, $parentOrChild);
+        $itemChild = Rbac_auth_item_child::where(function ($query) use ($parent, $column_parent, $column_child) {
+            $query->where($column_parent, $parent)->orWhere($column_child, $parent);
         })->delete();
         if ($itemChild > 0){
             return response()->json([

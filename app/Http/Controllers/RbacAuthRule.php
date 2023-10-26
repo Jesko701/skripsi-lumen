@@ -16,8 +16,8 @@ class RbacAuthRule extends BaseController
         ],200);
     }
 
-    public function show($id){
-        $authRule = Rbac_auth_rule::with('rbac_auth_item')->find($id);
+    public function show($name){
+        $authRule = Rbac_auth_rule::with('rbac_auth_item')->find($name);
         if (!$authRule){
             return response()->json([
                 'message' => 'data tidak ditemuakan',
@@ -39,9 +39,9 @@ class RbacAuthRule extends BaseController
         ],201);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $name){
         $request['updated_at'] = time();
-        $authRule = Rbac_auth_rule::find($id);
+        $authRule = Rbac_auth_rule::find($name);
         if (!$authRule){
             return response()->json([
                 'message' => 'data tidak ditemukan'
@@ -54,8 +54,8 @@ class RbacAuthRule extends BaseController
         ],200);
     }
 
-    public function hapus($id){
-        $authRule = Rbac_auth_rule::find($id);
+    public function hapus($name){
+        $authRule = Rbac_auth_rule::find($name);
         if (!$authRule){
             return response()->json([
                 'message' => 'data tidak ditemukan'
