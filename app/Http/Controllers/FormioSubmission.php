@@ -8,15 +8,55 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class FormioSubmission extends BaseController
 {
-    public function all(){
-        $forms = Formio_submission::all();
-        return response()->json([
-            'message' => 'berhasil mengambil seluruh data',
-            'data' => $forms
-        ],200);
+    public function all()
+    {
+        try {
+            $data = Formio_submission::all();
+            return response()->json([
+                'message' => 'data berhasil ditemukan',
+                'data' => $data,
+            ], 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengambil data',
+                'error' => $error->getMessage(),
+            ], 500);
+        }
     }
 
-    public function show($id){
+    public function dataPagination(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $jumlah = $request->input('jumlah', 50);
+        $offset = ($page - 1) * $jumlah;
+
+        try {
+            $data = Formio_submission::with('formio_forms')
+                ->offset($offset)
+                ->limit($jumlah)
+                ->get();
+
+            if ($data->isEmpty()) {
+                return response()->json([
+                    'message' => 'Data tidak ditemukan'
+                ], 404);
+            } else {
+                return response()->json([
+                    'message' => 'Data berhasil ditemukan',
+                    'data' => $data
+                ], 200);
+            }
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengambil data',
+                'error' => $error->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function show($id)
+    {
         $forms = Formio_submission::with('formio_forms')->find($id);
         if (!$forms) {
             return response()->json([
@@ -26,12 +66,13 @@ class FormioSubmission extends BaseController
         return response()->json([
             'message' => 'data berhasil ditemukan',
             'data' => $forms
-        ],201);
+        ], 201);
     }
 
-    public function create(Request $request){
-        $request['created_at']=time();
-        $request['updated_at']=time();
+    public function create(Request $request)
+    {
+        $request['created_at'] = time();
+        $request['updated_at'] = time();
         $forms = Formio_submission::create($request->all());
         return response()->json([
             'message' => 'data berhasil ditambahkan',
@@ -39,8 +80,9 @@ class FormioSubmission extends BaseController
         ]);
     }
 
-    public function update(Request $request, $id){
-        $request['updated_at']=time();
+    public function update(Request $request, $id)
+    {
+        $request['updated_at'] = time();
         $forms = Formio_submission::find($id);
         if (!$forms) {
             return response()->json([
@@ -51,10 +93,11 @@ class FormioSubmission extends BaseController
         return response()->json([
             'message' => 'data berhasil diupdate',
             'data' => $forms
-        ],201);
+        ], 201);
     }
 
-    public function hapus($id){
+    public function hapus($id)
+    {
         $forms = Formio_submission::find($id);
         if (!$forms) {
             return response()->json([
@@ -64,6 +107,6 @@ class FormioSubmission extends BaseController
         $forms->delete();
         return response()->json([
             'message' => 'data berhasil dihapus'
-        ],200);
+        ], 200);
     }
 }

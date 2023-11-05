@@ -19,6 +19,7 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'article'], function ($router) {
     $router->get('/', 'Article@all');
+    $router->get('/pagination', 'Article@dataPagination');
     $router->get('/{id}', 'Article@show');
     $router->post('/', 'Article@create');
     $router->put('/{id}', 'Article@update');
@@ -26,6 +27,7 @@ $router->group(['prefix' => 'article'], function ($router) {
 });
 $router->group(['prefix' => 'articleAtt'], function ($router) {
     $router->get('/', 'ArticleAttachment@all');
+    $router->get('/pagination', 'ArticleAttachment@dataPagination');
     $router->get('/{id}', 'ArticleAttachment@show');
     $router->post('/', 'ArticleAttachment@create');
     $router->put('/{id}', 'ArticleAttachment@update');
@@ -33,6 +35,7 @@ $router->group(['prefix' => 'articleAtt'], function ($router) {
 });
 $router->group(['prefix' => 'articleCat'], function ($router) {
     $router->get('/', 'ArticleCategory@all');
+    $router->get('/pagination', 'ArticleCategory@dataPagination');
     $router->get('/{id}', 'ArticleCategory@show');
     $router->post('/', 'ArticleCategory@create');
     $router->put('/{id}', 'ArticleCategory@update');
@@ -40,6 +43,7 @@ $router->group(['prefix' => 'articleCat'], function ($router) {
 });
 $router->group(['prefix' => 'forms'], function ($router) {
     $router->get('/', 'FormioForms@all');
+    $router->get('/pagination', 'FormioForms@dataPagination');
     $router->get('/{id}', 'FormioForms@show');
     $router->post('/', 'FormioForms@create');
     $router->put('/{id}', 'FormioForms@update');
@@ -47,6 +51,7 @@ $router->group(['prefix' => 'forms'], function ($router) {
 });
 $router->group(['prefix' => 'formsSubmission'], function ($router) {
     $router->get('/', 'FormioSubmission@all');
+    $router->get('/pagination', 'FormioSubmission@dataPagination');
     $router->get('/{id}', 'FormioSubmission@show');
     $router->post('/', 'FormioSubmission@create');
     $router->put('/{id}', 'FormioSubmission@update');
@@ -54,13 +59,15 @@ $router->group(['prefix' => 'formsSubmission'], function ($router) {
 });
 $router->group(['prefix' => 'rbacAssign'], function ($router) {
     $router->get('/', 'RbacAuthAssignment@all');
-    $router->get('/{item_name}', 'RbacAuthAssignment@show');
+    $router->get('/pagination', 'RbacAuthAssignment@dataPagination');
+    $router->get('/{user_id}', 'RbacAuthAssignment@show');
     $router->post('/', 'RbacAuthAssignment@create');
-    $router->put('/{item_name}', 'RbacAuthAssignment@update');
-    $router->delete('/{item_name}', 'RbacAuthAssignment@hapus');
+    $router->put('/{user_id}', 'RbacAuthAssignment@update');
+    $router->delete('/{user_id}', 'RbacAuthAssignment@hapus');
 });
 $router->group(['prefix' => 'rbacItem'], function ($router) {
     $router->get('/', 'RbacAuthItem@all');
+    $router->get('/pagination', 'RbacAuthItem@dataPagination');
     $router->get('/{name}', 'RbacAuthItem@show');
     $router->post('/', 'RbacAuthItem@create');
     $router->put('/{name}', 'RbacAuthItem@update');
@@ -68,10 +75,10 @@ $router->group(['prefix' => 'rbacItem'], function ($router) {
 });
 $router->group(['prefix' => 'rbacChild'], function ($router) {
     $router->get('/', 'RbacAuthItemChild@all');
-    $router->get('/{parent}', 'RbacAuthItemChild@show');
+    $router->get('/{child}', 'RbacAuthItemChild@show');
     $router->post('/', 'RbacAuthItemChild@create');
-    $router->put('/{parent}', 'RbacAuthItemChild@update');
-    $router->delete('/{parent}', 'RbacAuthItemChild@hapus');
+    $router->put('/{child}', 'RbacAuthItemChild@update');
+    $router->delete('/{child}', 'RbacAuthItemChild@hapus');
 });
 $router->group(['prefix' => 'rbacRule'], function ($router) {
     $router->get('/', 'RbacAuthRule@all');
@@ -79,4 +86,7 @@ $router->group(['prefix' => 'rbacRule'], function ($router) {
     $router->post('/', 'RbacAuthRule@create');
     $router->put('/{name}', 'RbacAuthRule@update');
     $router->delete('/{name}', 'RbacAuthRule@hapus');
+});
+$router->group(['prefix' => 'fileSystem'], function ($router) {
+    $router->get('/', 'FileStorageItem@all');
 });

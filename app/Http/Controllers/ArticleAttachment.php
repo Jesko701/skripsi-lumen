@@ -18,6 +18,27 @@ class ArticleAttachment extends BaseController
         ], 200);
     }
 
+    public function dataPagination(Request $request)
+{
+    $page = $request->input('page', 1);
+    $jumlah = (int)$request->input('jumlah', 50);
+    $offset = ($page - 1) * $jumlah;
+
+    try {
+        $data = Article_attachment::with('article')->skip($offset)->take($jumlah)->get();
+        return response()->json([
+            'message' => 'Data berhasil ditemukan',
+            'data' => $data
+        ], 200);
+    } catch (\Exception $error) {
+        return response()->json([
+            'message' => 'Terjadi kesalahan saat mengambil data',
+            'error' => $error->getMessage(),
+        ], 500);
+    }
+}
+
+
     public function show($id)
     {
         $attachment = Article_attachment::with('article')->find($id);

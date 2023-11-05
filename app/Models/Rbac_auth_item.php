@@ -20,6 +20,7 @@ class Rbac_auth_item extends Model implements AuthenticatableContract, Authoriza
      */
     protected $table = 'rbac_auth_item';
     protected $dateFormat = 'U'; 
+    protected $primaryKey = 'name';
     protected $fillable = [
         'name', 'type','description','rule_name','data','created_at','updated_at'
     ];
@@ -33,13 +34,13 @@ class Rbac_auth_item extends Model implements AuthenticatableContract, Authoriza
         
     ];
     public function rbac_auth_rule(){
-        return $this->belongsTo(Rbac_auth_rule::class,'rule_name','name');
+        return $this->belongsTo(Rbac_auth_rule::class,"rule_name","name");
     }
-    public function rbac_auth_item_child(){
-        return $this->hasMany(Rbac_auth_item_child::class);
+    public function rbac_auth_item_children(){
+        return $this->hasMany(Rbac_auth_item_child::class,"parent");
     }
     public function rbac_auth_assignment(){
-        return $this->hasMany(Rbac_auth_assignment::class);
+        return $this->hasMany(Rbac_auth_assignment::class,"item_name");
     }
 
 }

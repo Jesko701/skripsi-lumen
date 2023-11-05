@@ -19,6 +19,7 @@ class Article extends Model implements AuthenticatableContract, AuthorizableCont
      * @var array
      */
     protected $table = 'article';
+    protected $dateFormat = 'U';
     protected $fillable = [
         'slug', 'title', 'body', 'view', 'category_id', 'thumbnail_base_url', 'thumbnail_path', 'status', 'created_by', 'updated_by', 'published_at'
     ];
@@ -29,12 +30,15 @@ class Article extends Model implements AuthenticatableContract, AuthorizableCont
      * @var array
      */
     protected $hidden = [];
+    protected $nullable = [
+        'view', 'category_id', 'thumbnail_base_url', 'thumbnail_path', 'created_by', 'updated_by', 'published_at'
+    ];
     public function article_category()
     {
-        return $this->belongsTo(Article_category::class, 'category_id', 'id');
+        return $this->belongsTo(Article_category::class,'category_id','id');
     }
     public function article_attachment()
     {
-        return $this->hasMany(Article_attachment::class);
+        return $this->hasMany(Article_attachment::class,'article_id');
     }
 }

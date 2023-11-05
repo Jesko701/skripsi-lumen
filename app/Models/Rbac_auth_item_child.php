@@ -19,6 +19,8 @@ class Rbac_auth_item_child extends Model implements AuthenticatableContract, Aut
      * @var array
      */
     protected $table = 'rbac_auth_item_child';
+    public $timestamps = false;
+    protected $primaryKey = "child";
     protected $fillable = [
         'parent', 'child',
     ];

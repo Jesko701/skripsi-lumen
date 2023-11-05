@@ -16,6 +16,34 @@ class ArticleCategory extends BaseController
         ],200);
     }
 
+    public function dataPagination(Request $request)
+{
+    try {
+        $page = $request->query('page', 1);
+        $jumlah = (int)$request->query('jumlah', 50);
+        $offset = ($page - 1) * $jumlah;
+
+        $data = Article_category::with([
+            'article' => function ($query) use ($jumlah) {
+                $query->limit($jumlah);
+            }
+        ])->skip($offset)->take($jumlah)->get();
+
+        $totalData = Article_category::count();
+
+        return response()->json([
+            'message' => 'data berhasil ditemukan',
+            'data' => $data,
+            'total_data' => $totalData
+        ], 200);
+    } catch (\Exception $error) {
+        return response()->json([
+            'message' => 'Terjadi saat mengambil data',
+            'error' => $error->getMessage(),
+        ], 500);
+    }
+}
+
     public function show($id){
         $category = Article_category::with('article')->find($id);
         if (!$category) {

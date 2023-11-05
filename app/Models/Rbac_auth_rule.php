@@ -20,6 +20,7 @@ class Rbac_auth_rule extends Model implements AuthenticatableContract, Authoriza
      */
     protected $table = 'rbac_auth_rule';
     protected $dateFormat = 'U'; 
+    protected $primaryKey = "name";
     protected $fillable = [
         'name', 'data','created_at','updated_at'
     ];
@@ -33,6 +34,6 @@ class Rbac_auth_rule extends Model implements AuthenticatableContract, Authoriza
         
     ];
     public function rbac_auth_item(){
-        return $this->hasMany(Rbac_auth_item::class);
+        return $this->hasMany(Rbac_auth_item::class,"rule_name");
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Rbac_auth_item;
 use App\Models\Rbac_auth_item_child;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
@@ -18,9 +17,9 @@ class RbacAuthItemChild extends BaseController
         ], 200);
     }
 
-    public function show($parent)
+    public function show($child)
     {
-        $itemChild = Rbac_auth_item_child::with('rbac_auth_item')->find($parent);
+        $itemChild = Rbac_auth_item_child::with('rbac_auth_item')->find($child);
         if (!$itemChild) {
             return response()->json(['message' => "Data tidak ditemukan"], 404);
         }
@@ -38,32 +37,32 @@ class RbacAuthItemChild extends BaseController
         ], 201);
     }
 
-    public function update(Request $request, $parent)
+    public function update(Request $request, $child)
     {
         $column_parent = "parent";
         $column_child = "child";
-        $item = Rbac_auth_item_child::where(function ($query) use ($parent, $column_parent, $column_child) {
-            $query->where($column_parent, $parent)->orWhere($column_child, $parent);
+        $item = Rbac_auth_item_child::where(function ($query) use ($child, $column_parent, $column_child) {
+            $query->where($column_parent, $child)->orWhere($column_child, $child);
         })->update(['child' => $request->json('child')]);
         if ($item === 0) {
             return response()->json([
                 'message' => 'data tidak ditemukan'
             ], 404);
         }
-        $updateRecord = Rbac_auth_item_child::where(function ($query) use ($parent, $column_parent, $column_child) {
-            $query->where($column_parent, $parent)->orWhere($column_child, $parent);
+        $updateRecord = Rbac_auth_item_child::where(function ($query) use ($child, $column_parent, $column_child) {
+            $query->where($column_parent, $child)->orWhere($column_child, $child);
         })->get();
         return response()->json([
             'message' => 'data berhasil diupdate',
             'data' => $updateRecord
         ], 200);
     }
-    public function hapus($parent)
+    public function hapus($child)
     {
         $column_parent = 'parent';
         $column_child = 'child';
-        $itemChild = Rbac_auth_item_child::where(function ($query) use ($parent, $column_parent, $column_child) {
-            $query->where($column_parent, $parent)->orWhere($column_child, $parent);
+        $itemChild = Rbac_auth_item_child::where(function ($query) use ($child, $column_parent, $column_child) {
+            $query->where($column_child, $child)->orWhere($column_parent, $child);
         })->delete();
         if ($itemChild > 0){
             return response()->json([

@@ -16,8 +16,40 @@ class RbacAuthAssignment extends BaseController
         ],200);
     }
 
-    public function show($item_name){
-        $assignment = Rbac_auth_assignment::with('rbac_auth_item')->find($item_name);
+    public function dataPagination(Request $request)
+{
+    $page = $request->input('page', 1);
+    $jumlah = $request->input('jumlah', 50);
+    $offset = ($page - 1) * $jumlah;
+
+    try {
+        $data = Rbac_auth_assignment::with([
+            'rbac_auth_item'
+        ])
+        ->offset($offset)
+        ->limit($jumlah)
+        ->get();
+
+        if ($data->isEmpty()) {
+            return response()->json([
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        } else {
+            return response()->json([
+                'message' => 'Data berhasil ditemukan',
+                'data' => $data,
+            ], 200);
+        }
+    } catch (\Exception $error) {
+        return response()->json([
+            'message' => 'Terjadi kesalahan saat mengambil data',
+            'error' => $error->getMessage(),
+        ], 500);
+    }
+}
+
+    public function show($user_id){
+        $assignment = Rbac_auth_assignment::with('rbac_auth_item')->find($user_id);
         if (!$assignment){
             return response()->json([
                 'message' => 'data tidak ditemukan'
@@ -38,8 +70,8 @@ class RbacAuthAssignment extends BaseController
         ],201);
     }
 
-    public function update(Request $request, $item_name){
-        $assignment = Rbac_auth_assignment::find($item_name);
+    public function update(Request $request, $user_id){
+        $assignment = Rbac_auth_assignment::find($user_id);
         if (!$assignment){
             return response()->json([
                 'message' => 'data tidak ditemukan'
@@ -51,8 +83,8 @@ class RbacAuthAssignment extends BaseController
         ],201);
     }
 
-    public function hapus($item_name){
-        $assignment = Rbac_auth_assignment::find($item_name);
+    public function hapus($user_id){
+        $assignment = Rbac_auth_assignment::find($user_id);
         if (!$assignment) {
             return response()->json([
                 'message' => 'data tidak ditemukan'

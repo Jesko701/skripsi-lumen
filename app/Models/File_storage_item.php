@@ -20,8 +20,9 @@ class File_storage_item extends Model implements AuthenticatableContract, Author
      */
     protected $table = 'file_storage_item';
     protected $dateFormat = 'U';
+    public $timestamps = false;
     protected $fillable = [
-        'component', 'base_url','path','type','size','name','upload_ip'
+        'component', 'base_url','path','type','size','name','upload_ip','created_at'
     ];
 
     /**

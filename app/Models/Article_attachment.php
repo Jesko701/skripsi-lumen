@@ -20,8 +20,9 @@ class Article_attachment extends Model implements AuthenticatableContract, Autho
      */
     protected $table = 'article_attachment';
     protected $dateFormat = 'U';
+    public $timestamps = false;
     protected $fillable = [
-        'article_id', 'path','base_url','type','size','name','order'
+        'article_id', 'path','base_url','type','size','name','order','created_at'
     ];
 
     /**
@@ -32,6 +33,7 @@ class Article_attachment extends Model implements AuthenticatableContract, Autho
     protected $hidden = [
         
     ];
+    protected $nullable = ['base_url','type','size','name','order','created_at'];
     public function article(){
         return $this->belongsTo(Article::class,'article_id','id');
     }

@@ -16,6 +16,28 @@ class Article extends BaseController
             'data' => $article
         ], 200);
     }
+
+    public function dataPagination (Request $request) {
+        $page = $request->query('page', 1);
+        $jumlah = $request->query('jumlah', 50);
+        $offset = ($page - 1) * $jumlah;
+    
+        $data = ModelArticle::with([
+            'article_attachment' => function ($query) use ($jumlah) {
+                $query->limit($jumlah);
+            },
+            'article_category'
+        ])->skip($offset)->take($jumlah)->get();
+    
+        $totalData = ModelArticle::count(); // Jumlah total data
+    
+        return response()->json([
+            'message' => 'Data berhasil ditemukan',
+            'data' => $data,
+            'total_data' => $totalData
+        ], 200);
+    }
+
     public function show($id)
     {
         $article = ModelArticle::with('article_category', 'article_attachment')->find($id);
@@ -50,7 +72,7 @@ class Article extends BaseController
             ], 404);
         }
         $this->validate($request, [
-            'slug' => 'required|unique:articles,slug,' . $id,
+            'slug' => 'required|unique:article,slug,' . $id,
             'title' => 'required',
             'body' => 'required',
         ]);

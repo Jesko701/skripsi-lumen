@@ -20,6 +20,8 @@ class Rbac_auth_assignment extends Model implements AuthenticatableContract, Aut
      */
     protected $dateFormat = 'U'; 
     protected $table = 'rbac_auth_assignment';
+    protected $primaryKey = 'user_id';
+    public $timestamps = false;
     protected $fillable = [
         'item_name', 'user_id','created_at'
     ];
@@ -33,6 +35,6 @@ class Rbac_auth_assignment extends Model implements AuthenticatableContract, Aut
         
     ];
     public function rbac_auth_item(){
-        return $this->belongsTo(Rbac_auth_item::class,'item_name','name');
+        return $this->belongsTo(Rbac_auth_item::class,"item_name","name");
     }
 }

@@ -16,6 +16,35 @@ class FormioForms extends BaseController
         ],200);
     }
 
+    public function dataPagination(Request $request)
+{
+    $page = $request->input('page', 1);
+    $jumlah = (int)$request->input('jumlah', 50);
+    $offset = ($page - 1) * $jumlah;
+
+    try {
+        $data = Formio_forms::with(['formio_submission' => function ($query) use ($jumlah) {
+            $query->take($jumlah);
+        }])->skip($offset)->take($jumlah)->get();
+
+        if ($data->isEmpty()) {
+            return response()->json([
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        } else {
+            return response()->json([
+                'message' => 'Data berhasil ditemukan',
+                'data' => $data
+            ], 200);
+        }
+    } catch (\Exception $error) {
+        return response()->json([
+            'message' => 'Terjadi kesalahan saat mengambil data',
+            'error' => $error->getMessage(),
+        ], 500);
+    }
+}
+
     public function show($id){
         $forms = Formio_forms::with('formio_submission')->find($id);
         if (!$forms){

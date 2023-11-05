@@ -18,11 +18,12 @@ class Article_category extends Model implements AuthenticatableContract, Authori
      *
      * @var array
      */
-    protected $table = 'article';
+    protected $table = 'article_category';
     protected $dateFormat = 'U';
     protected $fillable = [
         'slug','title','body','parent_id','status'
     ];
+    protected $nullable = ['body','parent_id','created_at','updated_at'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -33,6 +34,6 @@ class Article_category extends Model implements AuthenticatableContract, Authori
         
     ];
     public function article(){
-        return $this->hasMany(Article::class);
+        return $this->hasMany(Article::class,'category_id');
     }
 }

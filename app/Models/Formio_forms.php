@@ -20,6 +20,7 @@ class Formio_forms extends Model implements AuthenticatableContract, Authorizabl
      */
     protected $table = 'formio_forms';
     protected $dateFormat = 'U';
+    public $timestamps = false;
     protected $fillable = [
         'status','name', 'token', 'model', 'data','created_by','updated_by','deleted','id_tema','is_only_kordes','is_only_dosen','is_harus_login'
     ];
@@ -33,6 +34,6 @@ class Formio_forms extends Model implements AuthenticatableContract, Authorizabl
         
     ];
     public function formio_submission(){
-        return $this->hasMany(Formio_submission::class);
+        return $this->hasMany(Formio_submission::class,'form_id');
     }
 }
