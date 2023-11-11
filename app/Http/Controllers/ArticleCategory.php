@@ -6,7 +6,12 @@ use App\Models\Article_category;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Amp\Loop;
-use Amp\Promise;
+use Amp\Promise as AmpPromise;
+use React\EventLoop\Factory;
+use React\Promise\Promise;
+use React\Promise\PromiseInterface;
+use React\EventLoop\Loop as ReactLoop;
+
 
 class ArticleCategory extends BaseController
 {
@@ -15,21 +20,20 @@ class ArticleCategory extends BaseController
         $data = null;
         $totalData = null;
         Loop::run(function () use (&$data, &$totalData) {
-            $dataPromise = \Amp\call(function () {
+            $dataPromise = (function () {
                 return Article_category::all();
             });
 
-            $totalDataPromise = \Amp\call(function () {
+            $totalDataPromise =(function () {
                 return Article_category::count();
             });
 
-            $result = yield \Amp\Promise\all([$dataPromise, $totalDataPromise]);
+            $result = yield AmpPromise\all([$dataPromise, $totalDataPromise]);
 
             $data = $result[0];
             $totalData = $result[1];
         });
 
-        // Mengembalikan response JSON
         return response()->json([
             'message' => 'Data berhasil ditemukan',
             'data' => $data,
@@ -47,6 +51,65 @@ class ArticleCategory extends BaseController
         ], 200);
     }
 
+    public function allReactPhp(Request $request)
+    {
+        $page = $request->query('page', 1);
+        $jumlah = (int) $request->query('jumlah', 50);
+        $offset = ($page - 1) * $jumlah;
+
+        $loop = Factory::create();
+
+        $dataPromise = $this->fetchDataAsync($jumlah, $offset, $loop);
+        $totalDataPromise = $this->fetchTotalDataAsync($loop);
+
+        $loop->run();
+
+        $dataPromise->then(
+            function ($data) use ($totalDataPromise) {
+                $totalDataPromise->then(
+                    function ($totalData) use ($data) {
+                        return response()->json([
+                            'message' => 'Data berhasil ditemukan',
+                            'data' => $data,
+                            'total_data' => $totalData,
+                        ], 200);
+                    },
+                    function ($error) {
+                        return response()->json([
+                            'message' => 'Terjadi kesalahan saat mengambil total data',
+                            'error' => $error->getMessage(),
+                        ], 500);
+                    }
+                );
+            },
+            function ($error) {
+                return response()->json([
+                    'message' => 'Terjadi kesalahan saat mengambil data',
+                    'error' => $error->getMessage(),
+                ], 500);
+            }
+        );
+    }
+
+    private function fetchDataAsync($jumlah, $offset, $loop): Promise
+    {
+        return new Promise(function (callable $resolve, callable $reject) use ($loop, $jumlah, $offset) {
+            $loop->addTimer(1, function () use ($resolve, $jumlah, $offset) {
+                $data = Article_category::skip($offset)->take($jumlah)->get()->toArray();
+                $resolve($data);
+            });
+        });
+    }
+
+    private function fetchTotalDataAsync($loop): Promise
+    {
+        return new Promise(function (callable $resolve, callable $reject) use ($loop) {
+            $loop->addTimer(1, function () use ($resolve) {
+                $totalData = Article_category::count();
+                $resolve($totalData);
+            });
+        });
+    }
 
     public function dataPagination(Request $request)
     {
