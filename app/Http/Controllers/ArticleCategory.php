@@ -23,6 +23,11 @@ class ArticleCategory extends BaseController
             $page = $request->query('page', 1);
             $jumlah = (int)$request->query('jumlah', 50);
             $offset = ($page - 1) * $jumlah;
+    {
+        try {
+            $page = $request->query('page', 1);
+            $jumlah = (int)$request->query('jumlah', 50);
+            $offset = ($page - 1) * $jumlah;
 
             $data = Article_category::with([
                 'article' => function ($query) use ($jumlah) {
@@ -59,6 +64,8 @@ class ArticleCategory extends BaseController
         ]], 200);
     }
 
+    public function create(Request $request)
+    {
     public function create(Request $request)
     {
         $request['created_at'] = time();
@@ -99,6 +106,7 @@ class ArticleCategory extends BaseController
         $category->delete();
         return response()->json([
             'message' => 'data berhasil dihapus'
+        ], 200);
         ], 200);
     }
 }

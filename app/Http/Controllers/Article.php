@@ -5,16 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Article as ModelArticle;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
+use Amp\Loop;
 
 class Article extends BaseController
 {
     public function all()
     {
-        $article = ModelArticle::all();
-        return response()->json([
-            'message' => 'berhasil mengambil seluruh data',
-            'data' => $article
-        ], 200);
+        try {
+            $article = null;
+            Loop::run(function () use (&$article) {
+                $articlePromise = \Amp\call(function () {
+                    return ModelArticle::all();
+                });
+                $article = yield $articlePromise;
+            });
+            return response()->json([
+                'message' => 'berhasil mengambil seluruh data',
+                'data' => $article
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengambil data',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
 
     public function dataPagination(Request $request)
@@ -41,17 +55,31 @@ class Article extends BaseController
 
     public function show($id)
     {
-        $article = ModelArticle::with('article_category', 'article_attachment')->find($id);
-        if (!$article) {
+        try {
+            $article = null;
+            Loop::run(function () use ($id, &$article) {
+                $articlePromise = \Amp\call(function () use ($id) {
+                    return ModelArticle::with('article_category', 'article_attachment')->find($id);
+                });
+                $article = \Amp\Promise\wait($articlePromise);
+            });
+            if (!$article) {
+                return response()->json([
+                    'message' => 'data tidak ditemukan'
+                ], 404);
+            }
             return response()->json([
-                'message' => 'data tidak ditemukan'
-            ], 404);
+                'message' => 'data berhasil ditemukan',
+                'data' => $article
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengambil data',
+                'error' => $th->getMessage(),
+            ], 500);
         }
-        return response()->json([
-            'message' => 'data berhasil ditemukan',
-            'data' => $article
-        ]);
     }
+
     public function create(Request $request)
     {
         $request['created_at'] = time();

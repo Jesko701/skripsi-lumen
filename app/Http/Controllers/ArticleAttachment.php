@@ -5,19 +5,39 @@ namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\Article_attachment;
 use Illuminate\Http\Request;
+use Amp\Loop;
 
 class ArticleAttachment extends BaseController
 {
     public function all()
     {
-        $attachment = Article_attachment::all();
-        return response()->json([
-            'message' => 'berhasil mengambil seluruh data',
-            'data' => $attachment
-        ], 200);
+        try {
+            $attachment = null;
+
+            Loop::run(function () use (&$attachment) {
+                $attachmentPromise = \Amp\call(function () {
+                    return Article_attachment::all();
+                });
+                $attachment = yield $attachmentPromise;
+            });
+
+            return response()->json([
+                'message' => 'berhasil mengambil seluruh data',
+                'data' => $attachment
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengambil data',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
 
     public function dataPagination(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $jumlah = (int)$request->input('jumlah', 50);
+        $offset = ($page - 1) * $jumlah;
     {
         $page = $request->input('page', 1);
         $jumlah = (int)$request->input('jumlah', 50);
@@ -54,7 +74,10 @@ class ArticleAttachment extends BaseController
 
     public function create(Request $request)
     {
+    public function create(Request $request)
+    {
         $request['created_at'] = time();
+
 
         $attachmentData = $request->all();
 
@@ -63,11 +86,15 @@ class ArticleAttachment extends BaseController
             'message' => 'data berhasil ditambahkan',
             'data' => $attachment
         ], 201);
+        ], 201);
     }
 
     public function update(Request $request, $id)
     {
+    public function update(Request $request, $id)
+    {
         $attachment = Article_attachment::find($id);
+        if (!$attachment) {
         if (!$attachment) {
             return response()->json([
                 'message' => 'data tidak ditemukan'
@@ -80,8 +107,7 @@ class ArticleAttachment extends BaseController
         ], 200);
     }
 
-    public function hapus($id)
-    {
+    public function hapus($id){
         $attachment = Article_attachment::find($id);
         if (!$attachment) {
             return response()->json([
