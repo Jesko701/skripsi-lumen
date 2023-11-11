@@ -64,13 +64,13 @@ class RbacAuthItemChild extends BaseController
         $itemChild = Rbac_auth_item_child::where(function ($query) use ($child, $column_parent, $column_child) {
             $query->where($column_child, $child)->orWhere($column_parent, $child);
         })->delete();
-        if ($itemChild > 0){
+        if ($itemChild > 0) {
             return response()->json([
                 'message' => 'data berhasil dihapus'
             ], 200);
         };
         return response()->json([
             'message' => 'data gagal dihapus'
-        ],404);
+        ], 404);
     }
 }
