@@ -6,28 +6,47 @@ use App\Models\Article_category;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Amp\Loop;
+use Amp\Promise;
 
 class ArticleCategory extends BaseController
 {
     public function all()
     {
-        $categoryData = [];
-
-        Loop::run(function () use (&$categoryData) {
-            $promises = [];
-            // Tambahkan setiap panggilan database sebagai promise
-            $promises['categories'] = \Amp\call(function () {
-                return Article_category::all()->toArray();
+        $data = null;
+        $totalData = null;
+        Loop::run(function () use (&$data, &$totalData) {
+            $dataPromise = \Amp\call(function () {
+                return Article_category::all();
             });
-            $results = yield $promises;
-            $categoryData = $results['categories'];
+
+            $totalDataPromise = \Amp\call(function () {
+                return Article_category::count();
+            });
+
+            $result = yield \Amp\Promise\all([$dataPromise, $totalDataPromise]);
+
+            $data = $result[0];
+            $totalData = $result[1];
         });
 
+        // Mengembalikan response JSON
         return response()->json([
-            'message' => 'berhasil mengambil seluruh data',
-            'data' => $categoryData
+            'message' => 'Data berhasil ditemukan',
+            'data' => $data,
+            'total_data' => $totalData,
         ], 200);
     }
+
+    public function allSync(){
+        $data = Article_category::all();
+        $totalData = Article_category::count();
+        return response()->json([
+            'message' => 'Data berhasil ditemukan',
+            'data' => $data,
+            'total_data' => $totalData,
+        ], 200);
+    }
+
 
     public function dataPagination(Request $request)
     {
@@ -36,73 +55,42 @@ class ArticleCategory extends BaseController
             $jumlah = (int)$request->query('jumlah', 50);
             $offset = ($page - 1) * $jumlah;
 
-            $data = null;
-            $totalData = null;
+            $data = Article_category::with([
+                'article' => function ($query) use ($jumlah) {
+                    $query->limit($jumlah);
+                }
+            ])->skip($offset)->take($jumlah)->get();
 
-            Loop::run(function () use ($jumlah, $offset, &$data, &$totalData) {
-                $promise = [];
-                $promise['categories'] = \Amp\call(function () use ($jumlah, $offset) {
-                    return Article_category::with([
-                        'article' => function ($query) use ($jumlah) {
-                            $query->limit($jumlah);
-                        }
-                    ])->skip($offset)->take($jumlah)->get()->toArray();
-                });
-                $promise['totalData'] = \Amp\call(
-                    function () {
-                        return Article_category::count();
-                    }
-                );
-
-                $result = yield $promise;
-                $data = $result['categories'];
-                $totalData = $result['totalData'];
-            });
+            $totalData = Article_category::count();
 
             return response()->json([
-                'message' => 'Data berhasil ditemukan',
+                'message' => 'data berhasil ditemukan',
                 'data' => $data,
-                'total_data' => $totalData,
+                'total_data' => $totalData
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
-                'message' => 'Terjadi kesalahan saat mengambil data',
+                'message' => 'Terjadi saat mengambil data',
                 'error' => $error->getMessage(),
             ], 500);
         }
     }
-
 
     public function show($id)
     {
-        try {
-            $categoryData = null;
-
-            Loop::run(function () use ($id, &$categoryData) {
-                $categoryPromise = \Amp\call(function () use ($id) {
-                    return Article_category::with('article')->find($id);
-                });
-
-                $categoryData = yield $categoryPromise;
-            });
-
-            if (!$categoryData) {
-                return response()->json([
-                    'message' => 'Data tidak ditemukan'
-                ], 404);
-            }
-
+        $category = Article_category::with('article')->find($id);
+        if (!$category) {
             return response()->json([
-                'message' => 'Data berhasil ditemukan',
-                'data' => $categoryData
-            ], 200);
-        } catch (\Exception $error) {
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat mengambil data',
-                'error' => $error->getMessage(),
-            ], 500);
+                'message' => 'data tidak ditemukan'
+            ], 404);
         }
+        return response()->json([[
+            'message' => 'data berhasil ditemukan',
+            'data' => $category
+        ]], 200);
     }
+
+
 
     public function create(Request $request)
     {
