@@ -12,8 +12,6 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-use Spatie\Async\Pool;
-$pool = new Pool();
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });

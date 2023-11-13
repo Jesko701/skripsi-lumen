@@ -6,33 +6,22 @@ use App\Models\Article_category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Lumen\Routing\Controller as BaseController;
-use Spatie\Async\Pool;
 use Illuminate\Support\Facades\Log;
+use Revolt\EventLoop;
 
 class ArticleCategory extends BaseController
 {
     public function all()
     {
-        $pool = Pool::create();
-
-        $pool->add(function () {
-            $data = ArticleCategory::all();
-            Log::info('Data retrieved from the database');
-            return $data;
-        })->then(function ($output) {
-            return response()->json([
-                'message' => 'Data berhasil diambil',
-                'data' => $output,
-            ]);
-        })->catch(function (\Throwable $exception) {
-            // Handle exception, jika terjadi kesalahan
-            Log::info('Exception: ' . $exception->getMessage());
-            return response()->json([
-                'error' => 'An error occurred while retrieving data',
-            ], 500);
+        $data = null;
+        EventLoop::defer(function () use (&$data) {
+            $data = Article_category::all();
         });
-
-        $pool->wait(); 
+        EventLoop::run();
+        return response()->json([
+            'message' => 'data berhasil diambil',
+            'data' => $data
+        ]);
     }
 
     public function dataPagination(Request $request)
