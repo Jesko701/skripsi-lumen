@@ -35,8 +35,6 @@ $router->group(['prefix' => 'articleAtt'], function ($router) {
 });
 $router->group(['prefix' => 'articleCat'], function ($router) {
     $router->get('/', 'ArticleCategory@all'); // tidak berpengaruh asyncnya
-    $router->get('/sync', 'ArticleCategory@allSync');
-    $router->get('/syncreact', 'ArticleCategory@allReactPhp');
     $router->get('/pagination', 'ArticleCategory@dataPagination');
     $router->get('/{id}', 'ArticleCategory@show');
     $router->post('/', 'ArticleCategory@create');
