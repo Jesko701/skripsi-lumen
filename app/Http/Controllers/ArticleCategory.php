@@ -7,22 +7,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Spatie\Async\Pool;
+use Illuminate\Support\Facades\Log;
 
 class ArticleCategory extends BaseController
 {
     public function all()
     {
         $pool = Pool::create();
+
         $pool->add(function () {
-            $data = Article_category::all();
+            $data = ArticleCategory::all();
+            Log::info('Data retrieved from the database');
             return $data;
+        })->then(function ($output) {
+            return response()->json([
+                'message' => 'Data berhasil diambil',
+                'data' => $output,
+            ]);
+        })->catch(function (\Throwable $exception) {
+            // Handle exception, jika terjadi kesalahan
+            Log::info('Exception: ' . $exception->getMessage());
+            return response()->json([
+                'error' => 'An error occurred while retrieving data',
+            ], 500);
         });
-        $hasil = $pool->wait();
-        $data = $hasil[0];
-        return response()->json([
-            'message' => 'Data berhasil ditemukan',
-            'data' => $data
-        ]);
+
+        $pool->wait(); 
     }
 
     public function dataPagination(Request $request)
