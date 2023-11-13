@@ -2,39 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\JobCategoryAll;
 use App\Models\Article_category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Lumen\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\DB;
+use Spatie\Async\Pool;
 
 class ArticleCategory extends BaseController
 {
     public function all()
     {
-        // $this->dispatch(new JobCategoryAll());
-        $cacheKey = 'articleCategoryAll';
-        Cache::remember($cacheKey, 60, function () {
-            // $data = DB::select('select * from article_category');
+        $pool = Pool::create();
+        $pool->add(function () {
             $data = Article_category::all();
-            return response()->json([
-                'message' => 'Data berhasil ditemukan',
-                'data' => $data
-            ]);
+            return $data;
         });
-        // return response()->json([
-        //     'message' => 'Permintaan diterima dan sedang diproses',
-        //     'data' => $data
-        // ], 200);
-        // $cacheKey = 'article_category_all';
-        // Cache::remember($cacheKey, 60, function (){
-        //     $data =  Article_category::all();
-        //     return response()->json([
-        //         'message' => 'Data berhasil ditemukan',
-        //         'data' => $data
-        //     ]);
-        // });
+        $hasil = $pool->wait();
+        $data = $hasil[0];
+        return response()->json([
+            'message' => 'Data berhasil ditemukan',
+            'data' => $data
+        ]);
     }
 
     public function dataPagination(Request $request)
