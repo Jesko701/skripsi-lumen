@@ -22,3 +22,10 @@ If you discover a security vulnerability within Lumen, please send an e-mail to 
 ## License
 
 The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Installation
+
+1. Copy .env.example file and rename to .env
+3. Add IP and Port variable to the .env file
+2. Configure based on your deployment
+4. Run using command "php bootstrap/server.php"

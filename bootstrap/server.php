@@ -10,6 +10,7 @@ $app = require __DIR__.'/../bootstrap/app.php';
 
 $loop = Loop::get();
 $ip = env('IP');
+$port = env('PORT');
 $handler = function (ServerRequestInterface $request) use ($app) {
     $parsedBody = $request->getParsedBody();
     if (empty($parsedBody) || !is_array($parsedBody)) {
@@ -36,7 +37,7 @@ $handler = function (ServerRequestInterface $request) use ($app) {
 };
 
 $server = new React\Http\HttpServer($handler);
-$port = 8000;
+
 $socket = new React\Socket\SocketServer("{$ip}:{$port}");
 $server->listen($socket);
 echo "Server running at http://$ip:$port\n";
