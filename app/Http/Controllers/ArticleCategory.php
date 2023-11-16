@@ -20,8 +20,8 @@ class ArticleCategory extends BaseController
     public function dataPagination(Request $request)
     {
         try {
-            $page = $request->query('page', 1);
-            $jumlah = (int)$request->query('jumlah', 50);
+            $page = $request->input('page', 1);
+            $jumlah = (int)$request->input('jumlah', 50);
             $offset = ($page - 1) * $jumlah;
 
             $data = Article_category::with([

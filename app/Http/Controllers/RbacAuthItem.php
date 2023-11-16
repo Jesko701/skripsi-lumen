@@ -19,8 +19,8 @@ class RbacAuthItem extends BaseController
 
     public function dataPagination(Request $request)
     {
-        $page = $request->query('page', 1);
-        $jumlah = $request->query('jumlah', 50);
+        $page = $request->input('page', 1);
+        $jumlah = $request->input('jumlah', 50);
         $offset = ($page - 1) * $jumlah;
 
         try {
@@ -30,10 +30,9 @@ class RbacAuthItem extends BaseController
                     $query->take($jumlah);
                 }
             ])
-                ->offset($offset)
-                ->limit($jumlah)
+                ->skip($offset)
+                ->take($jumlah)
                 ->get();
-
             if ($data->isEmpty()) {
                 return response()->json([
                     'message' => 'Data tidak ditemukan'
@@ -52,14 +51,14 @@ class RbacAuthItem extends BaseController
         }
     }
 
-
-
     public function show($name)
     {
-        $item = Rbac_auth_item::with('rbac_auth_item_children', 'rbac_auth_assignment')->find($name);
+        var_dump($name);
+        $item = Rbac_auth_item::with('rbac_auth_item_children', 'rbac_auth_assignment')->where('name','=',$name)->first();
+        var_dump($item);
         if (!$item) {
             return response()->json([
-                'message' => 'data tidak ditemukan'
+                'message' => 'data tidak ditemukan',
             ], 404);
         }
         return response()->json([

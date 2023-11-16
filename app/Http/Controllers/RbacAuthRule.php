@@ -10,10 +10,19 @@ class RbacAuthRule extends BaseController
 {
     public function all()
     {
-        $authRule = Rbac_auth_rule::all();
+        $authRules = Rbac_auth_rule::all();
+        // Memproses blob data sebelum mengirimkannya sebagai JSON
+        $processedAuthRules = $authRules->map(function ($authRule) {
+            return [
+                'name' => $authRule->name,
+                'data' => $authRule->formatted_data,
+                'created_at' => $authRule->created_at,
+                'updated_at' => $authRule->updated_at,
+            ];
+        });
         return response()->json([
             'message' => 'berhasil mengambil seluruh data',
-            'data' => $authRule
+            'data' => $processedAuthRules
         ], 200);
     }
 

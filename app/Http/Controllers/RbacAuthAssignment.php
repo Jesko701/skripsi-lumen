@@ -27,8 +27,8 @@ class RbacAuthAssignment extends BaseController
             $data = Rbac_auth_assignment::with([
                 'rbac_auth_item'
             ])
-                ->offset($offset)
-                ->limit($jumlah)
+                ->skip($offset)
+                ->take($jumlah)
                 ->get();
 
             if ($data->isEmpty()) {

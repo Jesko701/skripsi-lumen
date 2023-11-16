@@ -8,10 +8,13 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class FormioSubmission extends BaseController
 {
-    public function all()
+    public function all(Request $request)
     {
         try {
-            $data = Formio_submission::all();
+            $page = $request->input('page', 1);
+            $itemsPerPage = 75;
+            $offset = ($page - 1) * $itemsPerPage;
+            $data = Formio_submission::select('*')->offset($offset)->limit($itemsPerPage)->get();
             return response()->json([
                 'message' => 'data berhasil ditemukan',
                 'data' => $data,
@@ -32,8 +35,8 @@ class FormioSubmission extends BaseController
 
         try {
             $data = Formio_submission::with('formio_forms')
-                ->offset($offset)
-                ->limit($jumlah)
+                ->skip($offset)
+                ->take($jumlah)
                 ->get();
 
             if ($data->isEmpty()) {

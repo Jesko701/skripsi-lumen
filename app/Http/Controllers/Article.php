@@ -18,8 +18,8 @@ class Article extends BaseController
     }
 
     public function dataPagination (Request $request) {
-        $page = $request->query('page', 1);
-        $jumlah = $request->query('jumlah', 50);
+        $page = $request->input('page', 1);
+        $jumlah = $request->input('jumlah', 50);
         $offset = ($page - 1) * $jumlah;
     
         $data = ModelArticle::with([

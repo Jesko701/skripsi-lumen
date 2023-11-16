@@ -10,14 +10,14 @@ class FileStorageItem extends BaseController
 {
     public function all(Request $request)
     {
-        $page = $request->query('page', 1);
-        $jumlah = $request->query('jumlah', 50);
+        $page = $request->input('page', 1);
+        $jumlah = $request->input('jumlah', 50);
 
         $offset = ($page - 1) * $jumlah;
 
         try {
-            $getData = File_storage_item::offset($offset)
-                ->limit($jumlah)
+            $getData = File_storage_item::select('*')->skip($offset)
+                ->take($jumlah)
                 ->get();
 
             if ($getData->isEmpty()) {
