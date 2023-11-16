@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\Article_attachment;
 use Illuminate\Http\Request;
-use Amp\Loop;
 
 class ArticleAttachment extends BaseController
 {
