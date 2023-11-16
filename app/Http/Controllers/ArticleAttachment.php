@@ -6,7 +6,6 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Models\Article_attachment;
 use Illuminate\Http\Request;
 
-
 class ArticleAttachment extends BaseController
 {
     public function all()
@@ -50,7 +49,7 @@ class ArticleAttachment extends BaseController
         return response()->json([
             'message' => 'data berhasil ditemukan',
             'data' => $attachment
-        ],201);
+        ], 200);
     }
 
     public function create(Request $request)

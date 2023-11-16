@@ -6,7 +6,6 @@ use App\Models\Article as ModelArticle;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
-
 class Article extends BaseController
 {
     public function all()
@@ -30,7 +29,7 @@ class Article extends BaseController
             'article_category'
         ])->skip($offset)->take($jumlah)->get();
     
-        $totalData = ModelArticle::count(); // Jumlah total data
+        $totalData = ModelArticle::count();
     
         return response()->json([
             'message' => 'Data berhasil ditemukan',
