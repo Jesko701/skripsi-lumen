@@ -33,14 +33,12 @@ class Rbac_auth_rule extends Model implements AuthenticatableContract, Authoriza
     protected $hidden = [
         
     ];
+
+    protected $casts = [
+        'name' => 'string'
+    ];
+
     public function rbac_auth_item(){
         return $this->hasMany(Rbac_auth_item::class,"rule_name");
-    }
-
-    public function getFormattedDataAttribute(){
-        if (is_resource($this->data)){
-            return base64_encode(stream_get_contents($this->data));
-        }
-        return $this->data;
     }
 }

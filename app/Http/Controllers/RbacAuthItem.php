@@ -20,7 +20,7 @@ class RbacAuthItem extends BaseController
     public function dataPagination(Request $request)
     {
         $page = $request->input('page', 1);
-        $jumlah = $request->input('jumlah', 50);
+        $jumlah = (int)$request->input('jumlah', 50);
         $offset = ($page - 1) * $jumlah;
 
         try {
@@ -53,9 +53,7 @@ class RbacAuthItem extends BaseController
 
     public function show($name)
     {
-        var_dump($name);
-        $item = Rbac_auth_item::with('rbac_auth_item_children', 'rbac_auth_assignment')->where('name','=',$name)->first();
-        var_dump($item);
+        $item = Rbac_auth_item::with('rbac_auth_item_children', 'rbac_auth_assignment')->where('name','=',$name)->get();
         if (!$item) {
             return response()->json([
                 'message' => 'data tidak ditemukan',

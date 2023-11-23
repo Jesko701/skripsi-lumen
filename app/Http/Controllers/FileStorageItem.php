@@ -11,7 +11,7 @@ class FileStorageItem extends BaseController
     public function all(Request $request)
     {
         $page = $request->input('page', 1);
-        $jumlah = $request->input('jumlah', 50);
+        $jumlah = (int)$request->input('jumlah', 50);
 
         $offset = ($page - 1) * $jumlah;
 

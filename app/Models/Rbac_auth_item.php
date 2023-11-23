@@ -33,6 +33,10 @@ class Rbac_auth_item extends Model implements AuthenticatableContract, Authoriza
     protected $hidden = [
         
     ];
+
+    protected $casts = [
+        'name' => 'string'
+    ];
     public function rbac_auth_rule(){
         return $this->belongsTo(Rbac_auth_rule::class,"rule_name","name");
     }

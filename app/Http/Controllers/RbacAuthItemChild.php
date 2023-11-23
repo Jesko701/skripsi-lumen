@@ -19,7 +19,7 @@ class RbacAuthItemChild extends BaseController
 
     public function show($child)
     {
-        $itemChild = Rbac_auth_item_child::with('rbac_auth_item')->find($child);
+        $itemChild = Rbac_auth_item_child::with('rbac_auth_item')->where('parent','=',$child)->get();
         if (!$itemChild) {
             return response()->json(['message' => "Data tidak ditemukan"], 404);
         }

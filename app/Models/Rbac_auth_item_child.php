@@ -33,6 +33,10 @@ class Rbac_auth_item_child extends Model implements AuthenticatableContract, Aut
     protected $hidden = [
        
     ];
+
+    protected $casts = [
+        'child' => 'string'
+    ];
     public function rbac_auth_item(){
         return $this->belongsTo(Rbac_auth_item::class,'parent','name');
     }

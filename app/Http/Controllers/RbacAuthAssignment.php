@@ -11,8 +11,10 @@ class RbacAuthAssignment extends BaseController
     public function all()
     {
         $assignment = Rbac_auth_assignment::all();
+        $totalData = $assignment->count();
         return response()->json([
             'message' => 'berhasil mengambil seluruh data',
+            'total_data' => $totalData,
             'data' => $assignment
         ], 200);
     }
@@ -20,7 +22,7 @@ class RbacAuthAssignment extends BaseController
     public function dataPagination(Request $request)
     {
         $page = $request->input('page', 1);
-        $jumlah = $request->input('jumlah', 50);
+        $jumlah = (int)$request->input('jumlah', 50);
         $offset = ($page - 1) * $jumlah;
 
         try {
