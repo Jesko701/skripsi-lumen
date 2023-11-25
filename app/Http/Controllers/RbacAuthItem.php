@@ -25,10 +25,7 @@ class RbacAuthItem extends BaseController
 
         try {
             $data = Rbac_auth_item::with([
-                'rbac_auth_item_children',
-                'rbac_auth_assignment' => function ($query) use ($jumlah) {
-                    $query->take($jumlah);
-                }
+                'rbac_auth_item_children'
             ])
                 ->skip($offset)
                 ->take($jumlah)
@@ -38,6 +35,10 @@ class RbacAuthItem extends BaseController
                     'message' => 'Data tidak ditemukan'
                 ], 404);
             } else {
+                $data->load('rbac_auth_assignment');
+                $data->each(function ($item) use ($jumlah){
+                    $item->setRelation('rbac_auth_assignment', $item->rbac_auth_assignment->take($jumlah));
+                });
                 return response()->json([
                     'message' => 'Data berhasil ditemukan',
                     'data' => $data,

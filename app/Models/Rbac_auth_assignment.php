@@ -34,7 +34,10 @@ class Rbac_auth_assignment extends Model implements AuthenticatableContract, Aut
     protected $hidden = [
         
     ];
+    protected $casts = [
+        'user_id' => 'string'
+    ];
     public function rbac_auth_item(){
-        return $this->belongsTo(Rbac_auth_item::class,"item_name","name");
+        return $this->belongsTo(Rbac_auth_item::class,'item_name');
     }
 }
