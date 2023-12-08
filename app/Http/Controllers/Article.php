@@ -51,6 +51,21 @@ class Article extends BaseController
             'data' => $article
         ]);
     }
+
+    public function showSlug($slug)
+    {
+        $article = ModelArticle::with('article_category', 'article_attachment')->where('slug', $slug)->firstOrFail();
+        if (!$article) {
+            return response()->json([
+                'message' => 'data tidak ditemukan'
+            ], 404);
+        }
+        return response()->json([
+            'message' => 'data berhasil ditemukan',
+            'data' => $article
+        ]);
+    }
+
     public function create(Request $request)
     {
         $request['created_at'] = time();

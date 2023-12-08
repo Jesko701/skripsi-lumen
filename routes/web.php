@@ -20,6 +20,7 @@ $router->get('/', function () use ($router) {
 $router->group(['prefix' => 'article'], function ($router) {
     $router->get('/', 'Article@all');
     $router->get('/pagination', 'Article@dataPagination');
+    $router->get('/slug/{slug}', 'Article@showSlug');
     $router->get('/{id}', 'Article@show');
     $router->post('/', 'Article@create');
     $router->put('/{id}', 'Article@update');
