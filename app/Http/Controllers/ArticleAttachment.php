@@ -49,7 +49,7 @@ class ArticleAttachment extends BaseController
         return response()->json([
             'message' => 'data berhasil ditemukan',
             'data' => $attachment
-        ], 201);
+        ], 200);
     }
 
     public function create(Request $request)
