@@ -24,9 +24,20 @@ class FormioForms extends BaseController
         $offset = ($page - 1) * $jumlah;
 
         try {
-            $data = Formio_forms::with(['formio_submission' => function ($query) use ($jumlah) {
-                $query->take($jumlah);
-            }])->skip($offset)->take($jumlah)->get();
+            $data = Formio_forms::skip($offset)
+                ->take($jumlah)
+                ->get();
+
+            $data->load('formio_submission');
+
+            $data->each(function ($formioForm) use ($jumlah) {
+                $formioForm->setRelation(
+                    'formio_submission',
+                    $formioForm->formio_submission->take($jumlah)
+                );
+            });
+
+
 
             if ($data->isEmpty()) {
                 return response()->json([

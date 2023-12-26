@@ -17,24 +17,30 @@ class Article extends BaseController
         ], 200);
     }
 
-    public function dataPagination (Request $request) {
+    public function dataPagination(Request $request)
+    {
         $page = $request->input('page', 1);
         $jumlah = (int)$request->input('jumlah', 50);
         $offset = ($page - 1) * $jumlah;
-    
-        $data = ModelArticle::with([
-            'article_attachment' => function ($query) use ($jumlah) {
-                $query->limit($jumlah);
-            },
-            'article_category'
-        ])->skip($offset)->take($jumlah)->get();
-    
-        $totalData = ModelArticle::count(); // Jumlah total data
-    
+
+        $data = ModelArticle::skip($offset)
+            ->take($jumlah)
+            ->get();
+
+        $data->load(['article_attachment' => function ($query) use ($jumlah) {
+            $query->limit($jumlah);
+        }, 'article_category']);
+
+        $data->each(function ($modelArticle) use ($jumlah) {
+            $modelArticle->setRelation(
+                'article_attachment',
+                $modelArticle->article_attachment->take($jumlah)
+            );
+        });
+
         return response()->json([
             'message' => 'Data berhasil ditemukan',
             'data' => $data,
-            'total_data' => $totalData
         ], 200);
     }
 

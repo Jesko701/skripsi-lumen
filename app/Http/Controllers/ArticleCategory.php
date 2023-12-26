@@ -24,18 +24,22 @@ class ArticleCategory extends BaseController
             $jumlah = (int)$request->input('jumlah', 50);
             $offset = ($page - 1) * $jumlah;
 
-            $data = Article_category::with([
-                'article' => function ($query) use ($jumlah) {
-                    $query->limit($jumlah);
-                }
-            ])->skip($offset)->take($jumlah)->get();
+            $data = Article_category::skip($offset)
+                ->take($jumlah)
+                ->get();
 
-            $totalData = Article_category::count();
+            $data->load('article');
+
+            $data->each(function ($category) use ($jumlah) {
+                $category->setRelation(
+                    'article',
+                    $category->article->take($jumlah)
+                );
+            });
 
             return response()->json([
                 'message' => 'data berhasil ditemukan',
                 'data' => $data,
-                'total_data' => $totalData
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
